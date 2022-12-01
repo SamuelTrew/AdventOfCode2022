@@ -1,7 +1,7 @@
 use clap::Parser;
 use day1::Day1;
 use problem::Problem;
-use std::{fs::{read_to_string, read_dir}, path::Path, process};
+use std::{fs::{read_to_string}, path::Path, process};
 
 #[derive(Parser, Debug)]
 struct Args {
