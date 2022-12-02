@@ -1,6 +1,4 @@
 use clap::Parser;
-use day1::Day1;
-use problem::Problem;
 use std::{fs::{read_to_string}, path::Path, process};
 
 #[derive(Parser, Debug)]
@@ -10,11 +8,17 @@ struct Args {
 }
 
 mod day1;
+mod day2;
+mod day3;
+mod day4;
 mod problem;
 
-fn day_to_problem(day: u8) -> Option<Box<dyn Problem>> {
+fn day_to_problem(day: u8) -> Option<Box<dyn problem::Problem>> {
     match day {
-        1 => Some(Box::new(Day1 {})),
+        1 => Some(Box::new(day1::Day1 {})),
+        2 => Some(Box::new(day2::Day2 {})),
+        3 => Some(Box::new(day3::Day3 {})),
+        4 => Some(Box::new(day4::Day4 {})),
         // ...
         _ => None,
     }
