@@ -1,5 +1,4 @@
 use std::{collections::HashSet};
-use asciis::asc::Asciis;
 
 use crate::problem::Problem;
 
@@ -8,13 +7,13 @@ pub struct Day3 {}
 impl Problem for Day3 {
     fn part_one(&self, input: &str) -> String {
         let rucksacks = input.split("\n");
-        let mut common_chars = Vec::new();
+        let mut res = 0;
+        let mut fst = HashSet::<char>::new();
 
         for sack in rucksacks {
             let mut chars = sack.chars();
             let div = sack.len() / 2;
-
-            let mut fst = HashSet::<char>::new();
+            fst.clear();
 
             // For some reason nth(0) consumes the value
             for _ in 0..div {
@@ -24,18 +23,18 @@ impl Problem for Day3 {
             for _ in div..sack.len() {
                 let common = chars.nth(0).unwrap();
                 if fst.contains(&common) {
-                    common_chars.push(common);
+                    res += char_convert(&common);
                     break;
                 }
             }
         }
 
-        return format!("{}", common_chars.iter().map(char_convert).sum::<i32>());
+        return format!("{}", res);
     }
 
     fn part_two(&self, input: &str) -> String {
         let mut rucksacks = input.split("\n");
-        let mut common_chars = Vec::new();
+        let mut res = 0;
 
         while let Some(one) = rucksacks.next() {
             let fst = HashSet::<char>::from_iter(one.chars());
@@ -47,13 +46,13 @@ impl Problem for Day3 {
 
             for val in common {
                 if thr.contains(val) {
-                    common_chars.push(val.clone());
+                    res += char_convert(&val);
                     break;
                 }
             }
         }
 
-        return format!("{}", common_chars.iter().map(char_convert).sum::<i32>());
+        return format!("{}", res);
     }
 }
 
@@ -61,10 +60,8 @@ impl Problem for Day3 {
 // a-z = 1-26
 // A-Z = 27-52
 fn char_convert(c: &char) -> i32 {
-    let asc = Asciis{};
-    let val = asc.ord(c.encode_utf8(&mut [0; 4])).unwrap();
+    let ord = *c as i32;
+    if ord <= 90 { return ord - 38; }
 
-    if val <= 90 { return val - 38; }
-
-    return val - 96;
+    return ord - 96;
 }

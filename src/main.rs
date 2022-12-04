@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::{fs::{read_to_string}, path::Path, process};
+use std::{fs::{read_to_string}, path::Path, process, time::Instant};
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -52,8 +52,11 @@ fn main() {
 
     match problem {
         Some(problem) => {
-            println!("{}", problem.part_one(&part1));
-            println!("{}", problem.part_two(&part2));
+            let mut now = Instant::now();
+            println!("Part 1: {}, Elapsed: {:.2?}", problem.part_one(&part1), now.elapsed());
+
+            now = Instant::now();
+            println!("Part 2: {}, Elapsed: {:.2?}", problem.part_two(&part2), now.elapsed());
         },
         None => println!("Invalid day specified")
     }
