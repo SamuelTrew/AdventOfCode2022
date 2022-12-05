@@ -44,6 +44,8 @@ fn calc_score(pair: (char, char)) -> i32 {
     return (((diff+4) % 3) * 3) + me;
 }
 
+// X - lose so converting from pair.0 to pair.1 where pair.0 is winning is (opp + 2) % 3
+// Z - win so converting from pair.0 to pair.1 where pair.0 is losing is (opp + 4) % 3
 fn calc_move_pair(pair: (char, char)) -> (char, char) {
     let opp = convert_char(pair.0);
 
