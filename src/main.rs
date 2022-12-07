@@ -14,6 +14,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 mod problem;
 
 fn day_to_problem(day: u8) -> Option<Box<dyn problem::Problem>> {
@@ -25,6 +26,7 @@ fn day_to_problem(day: u8) -> Option<Box<dyn problem::Problem>> {
         5 => Some(Box::new(day5::Day5 {})),
         6 => Some(Box::new(day6::Day6 {})),
         7 => Some(Box::new(day7::Day7 {})),
+        8 => Some(Box::new(day8::Day8 {})),
         // ...
         _ => None,
     }
