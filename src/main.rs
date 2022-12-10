@@ -17,6 +17,7 @@ mod day7;
 mod day8;
 mod day9;
 mod day10;
+mod day11;
 mod problem;
 
 fn day_to_problem(day: u8) -> Option<Box<dyn problem::Problem>> {
@@ -32,6 +33,7 @@ fn day_to_problem(day: u8) -> Option<Box<dyn problem::Problem>> {
         // I stopped trying to pre-optimise here as I overdid day 8
         9 => Some(Box::new(day9::Day9 {})),
         10 => Some(Box::new(day10::Day10 {})),
+        11 => Some(Box::new(day11::Day11 {})),
         // ...
         _ => None,
     }
