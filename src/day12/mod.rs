@@ -7,6 +7,7 @@ pub struct Day12 {}
 impl Problem for Day12 {
     fn part_one(&self, input: &str) -> String {
         let mut start = (0, 0); // This should not be the case unless S actually is (0, 0)
+        let mut end = (0, 0); // This should not be the case unless E actually is (0, 0)
         let grid = input
             .lines()
             .enumerate()
@@ -16,7 +17,7 @@ impl Problem for Day12 {
                 .enumerate()
                 .map(|(x, chr)| {
                     if chr == 'S' { start = (x, y);  return 0; }
-                    if chr == 'E' { return 1000; }
+                    if chr == 'E' { end = (x, y); return 26; }
                     return chr as i32 - 97;
                 }) // Turn to numbers
                 .collect::<Vec<i32>>())
@@ -27,11 +28,36 @@ impl Problem for Day12 {
 
         bfs(&grid, result, start);
 
-        return format!("{:?}", result.iter().map(|l| l.iter().filter(|res| res.is_some()).map(|res| res.unwrap()).max().unwrap()).max().unwrap());
+        return format!("{:?}", result[end.1][end.0].unwrap());
     }
 
     fn part_two(&self, input: &str) -> String {
-        return format!("Part 1 not implemented.");
+        let mut starts = vec![];
+        let mut end = (0, 0); // This should not be the case unless E actually is (0, 0)
+        let grid = input
+            .lines()
+            .enumerate()
+            .map(|(y, l)| l
+                .chars()
+                .filter(|chr| *chr != '\r')
+                .enumerate()
+                .map(|(x, chr)| {
+                    if chr == 'S' || chr == 'a' { starts.push((x, y));  return 0; }
+                    if chr == 'E' { end = (x, y); return 26; }
+                    return chr as i32 - 97;
+                }) // Turn to numbers
+                .collect::<Vec<i32>>())
+            .collect::<Vec<Vec<i32>>>();
+
+        let result: &mut Vec<Vec<Option<i32>>> = &mut vec![vec![None; grid[0].len()]; grid.len()];
+
+        for start in starts.iter() {
+            result[start.1][start.0] = Some(0);
+
+            bfs(&grid, result, *start);
+        }
+
+        return format!("{:?}", result[end.1][end.0].unwrap());
     }
 }
 
@@ -70,10 +96,10 @@ fn bfs (grid: &Vec<Vec<i32>>, result: &mut Vec<Vec<Option<i32>>>, point: (usize,
 fn search_in_direction(grid: &Vec<Vec<i32>>, result: &mut Vec<Vec<Option<i32>>>, x: usize, y: usize, curr_depth: i32, curr_result: i32, queue: &mut VecDeque<(usize, usize)>) {
     let depth = grid[y][x];
 
-    if depth == 1000 { // E
-        result[y][x] = Some(curr_result + 1);
-        return;
-    }
+    // if depth == 1000 && curr_depth == 25 { // E
+    //     result[y][x] = Some(curr_result + 1);
+    //     return;
+    // }
 
     let res = result[y][x];
     let can_go =
