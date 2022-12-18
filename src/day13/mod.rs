@@ -1,3 +1,4 @@
+use std::iter::once;
 use std::{str::Lines, mem::ManuallyDrop};
 use std::fmt::Debug;
 
@@ -38,14 +39,45 @@ impl Problem for Day13 {
     }
 
     fn part_two(&self, input: &str) -> String {
-        return format!("Part 1 not implemented.");
+        let pairs = input
+            .replace('\r', "")
+            .split("\n\n")
+            .map(|pair| convert_to_lists(pair.lines()))
+            .flat_map(|p| once(p.0).chain(once(p.1)))
+            .collect::<Vec<ManuallyDrop<Vec<Item>>>>();
+
+        let mut count1: usize = 0;
+        let mut count2: usize = 0;
+
+        // First
+        let mut v1 = Vec::new();
+        v1.push(Item::Item(2));
+        let m1 = ManuallyDrop::new(v1);
+        let mut v2 = Vec::new();
+        v2.push(Item::List(m1));
+        let m2 = ManuallyDrop::new(v2);
+
+        // Second
+        let mut v3 = Vec::new();
+        v3.push(Item::Item(6));
+        let m3 = ManuallyDrop::new(v3);
+        let mut v4 = Vec::new();
+        v4.push(Item::List(m3));
+        let m4 = ManuallyDrop::new(v4);
+
+        for packet in pairs.iter() {
+            iterate(&(packet, &m2), &mut count1, 1, &mut false);
+            iterate(&(packet, &m4), &mut count2, 1, &mut false);
+        }
+
+        return format!("{}", (count1+1) * (count2+2));
     }
 }
 
 fn iterate((left, right): &(&ManuallyDrop<Vec<Item>>, &ManuallyDrop<Vec<Item>>), count: &mut usize, j: usize, to_skip: &mut bool) {
     for (i, l) in left.iter().enumerate() {
         // Right is shorter than left, so wrong order
-        if i == right.len() { *to_skip = true; break; }
+        if i == right.len() { *to_skip = true; return; }
 
         let r = &right[i];
 
@@ -68,7 +100,6 @@ fn iterate((left, right): &(&ManuallyDrop<Vec<Item>>, &ManuallyDrop<Vec<Item>>),
                         let mut v = Vec::new();
                         v.push(Item::Item(*l_item));
                         iterate(&(&ManuallyDrop::new(v), r_list), count, j, to_skip);
-                        if *to_skip { return; }
                     },
                 }
             },
@@ -78,15 +109,14 @@ fn iterate((left, right): &(&ManuallyDrop<Vec<Item>>, &ManuallyDrop<Vec<Item>>),
                         let mut v = Vec::new();
                         v.push(Item::Item(*r_item));
                         iterate(&(l_list, &ManuallyDrop::new(v)), count, j, to_skip);
-                        if *to_skip { return; }
                     },
                     Item::List(r_list) => {
                         iterate(&(l_list, r_list), count, j, to_skip);
-                        if *to_skip { return; }
                     },
                 }
             },
         }
+        if *to_skip { return; }
     }
 
     // Checking if got to the end of the left list but it's smaller than the right
